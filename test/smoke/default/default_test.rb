@@ -12,9 +12,6 @@ unless os.windows?
   end
 end
 
-
-
-
 #nginx
 
 describe package 'nginx' do

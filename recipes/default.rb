@@ -14,9 +14,6 @@ service 'nginx' do
 	action [:enable, :start]
 end
 
-
-
-
 remote_file '/tmp/node_installer' do
 	source 'https://deb.nodesource.com/setup_6.x'
 	action :create
@@ -32,4 +29,24 @@ end
 
 execute "install pm2" do
 	command "npm install pm2 -g"
+end	
+
+link '/etc/nginx/sites-enabled/default' do  
+	action :delete
+end
+
+template '/etc/nginx/sites-available/proxy' do  
+  source 'proxy.erb'
+  owner 'root'
+  group 'root'
+  mode '0755'
+end	
+
+link '/etc/nginx/sites-enabled/proxy' do  
+  to '/etc/nginx/sites-available/proxy'
+  link_type :symbolic
+end
+
+service 'nginx' do
+	action :restart
 end	

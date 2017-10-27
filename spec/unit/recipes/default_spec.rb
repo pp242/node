@@ -31,13 +31,20 @@ describe 'node-server::default' do
       expect(chef_run).to enable_service 'nginx'
     end 
 
+    it 'deletes link' do
+      expect(chef_run).to delete_link '/etc/nginx/sites-enabled/default'
+    end
+
+    it 'makes sure link works' do
+      expect(chef_run).to create_link('/etc/nginx/sites-available/proxy')
+    end
 
     it 'installs node' do
       expect(chef_run).to run_execute ("sh /tmp/node_installer")
     end 
 
-    it 'downloads the nodejs installer'
-      expect{chef_run}.to create_remote_file('/tmp/node_installer').with(source: 'https://deb.nodesource.com/setup_6.x')
+    it 'downloads the nodejs installer' do
+      expect(chef_run).to create_remote_file('/tmp/node_installer').with(source: 'https://deb.nodesource.com/setup_6.x')
     end  
     # it 'installs pm2' do
     #   expect(chef_run).to install_package 'pm2'
@@ -48,6 +55,11 @@ describe 'node-server::default' do
     it 'installs pm2 with npm' do
       expect(chef_run).to run_execute'npm install pm2 -g'
     end  
+
+    it 'expect to make template proxy' do
+      expect(chef_run).to create_template '/etc/nginx/sites-available/proxy'
+      template = chef_run.template('/etc/nginx/sites-available/proxy')
+    end
 
   end
 end
